@@ -1,9 +1,9 @@
-name: CI/CD Pipeline
+name: Build and Deploy
 
 on:
   push:
     branches:
-      - main  
+      - main
 
 jobs:
   build:
@@ -13,13 +13,30 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install Dependencies
-        run: npm install  
+        run: npm install
 
       - name: Build Project
-        run: npm run build  
+        run: npm run build  # Generates the dist/ folder
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: build-output
-          path: dist/  
+          path: dist/  # Specify the correct folder
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-output
+          path: dist/  # Downloads artifacts into dist/
+
+      - name: Deploy to Server
+        run: |
+          scp -r dist/* user@yourserver.com:/var/www/html/
