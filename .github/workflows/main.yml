@@ -1,32 +1,39 @@
-name: Build and Deploy
+name: Build and Deploy Project
 
 on:
   push:
     branches:
-      - main
+      - main  # Runs when code is pushed to main
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Use Ubuntu for build
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18  # Change if needed
 
       - name: Install Dependencies
         run: npm install
 
       - name: Build Project
-        run: npm run build  # Generates the dist/ folder
+        run: npm run build  # Generates build/ folder
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: build-output
-          path: dist/  # Specify the correct folder
+          path: build/  # Uploads built files
 
   deploy:
-    needs: build
+    needs: build  # Deploy runs after a successful build
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -35,8 +42,10 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build-output
-          path: dist/  # Downloads artifacts into dist/
+          path: build/
 
       - name: Deploy to Server
         run: |
-          scp -r dist/* user@yourserver.com:/var/www/html/
+          scp -r build/* user@yourserver.com:/var/www/html/
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
