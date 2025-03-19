@@ -1,51 +1,17 @@
-name: Build and Deploy HTML Project
+name: Build HTML Project
 
 on:
   push:
     branches:
-      - main  # Runs when code is pushed to the uat branch
+      - main  
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18  # Change version if needed
-
-      - name: Install Dependencies
-        run: npm install  # Install dependencies
-
-      - name: Build Project
-        run: npm run build  # Build the project
-
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-output
-          path: build/  # Change if your build output is in another folder
-
   deploy:
-    needs: build  # Ensures this runs after the build job
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    - name: Checkout Repository
+      uses: actions/checkout@v3
 
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output
-          path: build/
-
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: gh-pages  # Deploy to GitHub Pages branch
-          folder: build/  # Change this if needed
+    - name: Trigger build
+      uses: actions/setup-node@v3
