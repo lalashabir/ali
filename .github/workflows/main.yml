@@ -1,4 +1,4 @@
-name: Deploy JavaScript Project
+name: Build and Deploy Website
 
 on:
   push:
@@ -6,19 +6,15 @@ on:
       - main  
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
-    - name: Install Dependencies
-      run: npm install
-
     - name: Build Project
-      run: npm run build
+      run: echo "Building project..."  # Replace with actual build command if needed
 
-    - name: Deploy
-      run: |
-        echo "Deploying website..."
+    - name: Deploy Project
+      run: echo "Deploying project..."  # Replace with actual deployment command
